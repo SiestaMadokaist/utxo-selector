@@ -1,0 +1,60 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "ban-types": false,
+        "no-namespace": false,
+        "ordered-imports": false,
+        "interface-name": false,
+        "eofline": {
+            "severity": "warning"
+        },
+        "variable-name": false,
+        "quotemark": {
+            "severity": "warning",
+            "options": ["single"]
+        },
+        "max-line-length":false,
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "member-variable-declaration",
+            "property-declaration"
+        ],
+        "whitespace": {
+            "severity": "warning",
+            "options": [
+                "check-branch",
+                "check-decl",
+                "check-module",
+                "check-operator",
+                "check-preblock",
+                "check-rest-spread",
+                "check-separator",
+                "check-type",
+                "check-type-operator",
+                "check-typecast"
+            ]
+        },
+        "one-line": {
+            "severity": "warning",
+            "options": [
+                "check-catch",
+                "check-else",
+                "check-finally",
+                "check-open-brace",
+                "check-whitespace"
+            ]
+        },
+        "member-ordering": false,
+        "member-access": [true, "no-public"],
+        "no-empty": [false],
+        "max-classes-per-file": false,
+        "semicolon": [true, "always"]
+    },
+    "rulesDirectory": []
+}

@@ -1,0 +1,10 @@
+dist
+*.swp
+yarn-error.log
+node_modules/
+packages
+coverage/
+# Serverless directories
+.serverless
+.env.sh
+env/**

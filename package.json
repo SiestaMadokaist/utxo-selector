@@ -1,0 +1,37 @@
+{
+  "name": "template.ramadoka",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn dep && tsc",
+    "lint": "tslint -p tsconfig.json",
+    "fix": "yarn lint -p tsconfig.json -c tslint.fix.json --fix",
+    "circular": "madge --circular ./dist",
+    "test": "mocha -r ts-node/register src/**/**.test.ts",
+    "graph": "madge --image graph.png ./dist",
+    "_deploy": "rm -rf ./dist && yarn fix && tsc && serverless deploy",
+    "dev": "node --inspect=5858 -r ts-node/register ./src/index.dev.ts",
+    "dev:watch": "nodemon",
+    "deploy": "yarn _deploy --config serverless/production.yml",
+    "devdeploy": "yarn _deploy --config serverless/development.yml"
+  },
+  "dependencies": {
+    "@cryptoket/ts-maybe": "^1.0.17",
+    "@cryptoket/ts-memoize": "^1.0.10",
+    "@cryptoket/ts-promise-helper": "^1.0.25",
+    "bignumber.js": "^9.0.0",
+    "bitcoinjs-lib": "^5.1.7"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/debug": "^4.1.5",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "12",
+    "chai": "^4.2.0",
+    "debug": "^4.1.1",
+    "md5": "^2.2.1",
+    "mocha": "^5.2.0",
+    "nyc": "^14.1.1"
+  }
+}

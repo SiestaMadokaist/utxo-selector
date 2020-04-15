@@ -1,0 +1,81 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "interface-name": false,
+        "eofline": {
+            "severity": "warning"
+        },
+        "ordered-imports": {
+            "severity": "warning"
+        },
+        "variable-name": false,
+        "quotemark": {
+            "severity": "warning",
+            "options": ["single"]
+        },
+        "max-line-length":false,
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "member-variable-declaration",
+            "property-declaration"
+        ],
+        "whitespace": {
+            "severity": "warning",
+            "options": [
+                "check-branch",
+                "check-decl",
+                "check-module",
+                "check-operator",
+                "check-preblock",
+                "check-rest-spread",
+                "check-separator",
+                "check-type",
+                "check-type-operator",
+                "check-typecast"
+            ]
+        },
+        "one-line": {
+            "severity": "warning",
+            "options": [
+                "check-catch",
+                "check-else",
+                "check-finally",
+                "check-open-brace",
+                "check-whitespace"
+            ]
+        },
+        "member-access": [true, "no-public"],
+        "no-empty": [false],
+        "max-classes-per-file": false,
+        "semicolon": [true, "always"],
+        "member-ordering": {
+            "severity": "warning",
+            "options": {
+                "alphabetize": true,
+                "order": [
+                    "private-static-field",
+                    "protected-static-field",
+                    "public-static-field",
+
+                    "private-instance-field",
+                    "protected-instance-field",
+                    "public-instance-field",
+
+                    "public-constructor",
+                    "private-constructor",
+
+                    "public-instance-method",
+                    "protected-instance-method",
+                    "private-instance-method"
+                ]
+            }
+        }
+    },
+    "rulesDirectory": []
+}
