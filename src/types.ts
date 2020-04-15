@@ -53,14 +53,15 @@ export namespace UTXO {
   export interface WitnessInput extends BaseInput {
     hash: InputHash;
     index: VOutIndex;
-    nonWitnessUtxo?: undefined;
+    nonWitnessUtxo?: NonWitnessUTXO;
     witnessUtxo: WitnessUTXO;
   }
 
   export interface NonWitnessInput extends BaseInput {
+    hash: InputHash;
     index: VOutIndex;
     nonWitnessUtxo: NonWitnessUTXO;
-    witnessUtxo?: undefined;
+    witnessUtxo?: WitnessUTXO;
   }
 
   export type Input = WitnessInput | NonWitnessInput;

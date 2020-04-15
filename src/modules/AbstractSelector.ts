@@ -8,7 +8,8 @@ namespace UNIT {
 }
 
 export interface SelectorConfig {
-  dustThreshold: BD.Value<-8>;
+  // dustThreshold: BD.Value<-8>;
+  headerCost: BD.Value<-8>;
   inputByteSize: UTXO.ByteSize;
   outputByteSize: UTXO.ByteSize;
 }
@@ -58,6 +59,8 @@ export abstract class AbstractSelector {
 
   constructor(readonly props: UTXO.SelectorProps) {}
 
+  protected abstract headerCost(): BD.Satoshi;
+
   changeValue(): BD.Satoshi {
     return Memoize(this, 'changeValue', () => {
       const inputFee = BD.BigDecimal.satoshi(this.costPerInput().multipliedBy(new BigNumber(this.inputUtxos().length)).toNumber(), UNIT.SATOSHI);
@@ -65,8 +68,7 @@ export abstract class AbstractSelector {
       const multiplier = new BigNumber(this[_outputs]().length);
       const outputFee0 = BD.BigDecimal.satoshi(this.costPerOutput().multipliedBy(multiplier.plus(1)).toNumber(), UNIT.SATOSHI);
       const totalInput = this.totalInputs();
-      const headerCost = BD.BigDecimal.satoshi(13 * this.props.feeRate);
-      const feeCost = inputFee.plus(headerCost).plus(outputFee0);
+      const feeCost = inputFee.plus(this.headerCost()).plus(outputFee0);
       const testChange = totalInput
         .minus(totalOutput)
         .minus(feeCost)
@@ -235,11 +237,11 @@ export abstract class AbstractSelector {
             script: output.script,
             value: output.value
           },
-          nonWitnessUtxo: undefined,
+          nonWitnessUtxo: input.nonWitnessUtxo,
         };
         accumulator.push(witnessUtxo);
       } else if (input.witnessUtxo) {
-        accumulator.push(input);
+        accumulator.push(input as UTXO.WitnessInput);
       }
     }
     return accumulator;

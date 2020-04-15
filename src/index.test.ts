@@ -2,7 +2,7 @@ import * as bitcoin from 'bitcoinjs-lib';
 import { expect } from 'chai';
 import $debug from 'debug';
 import utils from 'util';
-import { BIP84Calculator } from '.';
+import { P2WPKHCalculator } from '.';
 import { BD } from './modules/BigDecimal';
 // import { BIP84Calculator, Input, TxOutput, UTXOSelector, WitnessInput } from './types';
 import { UTXO } from './types';
@@ -30,7 +30,7 @@ const compareWithVSize = (inputCount: number, outputCount: number) => {
   }));
   const outputs: UTXO.TxOutput[] = [ ...new Array(outputCount)].map((x) => ({ address, value: Math.floor(Math.random() * 2000) }));
   const feeRate = 1;
-  const calculator = new BIP84Calculator({
+  const calculator = new P2WPKHCalculator({
     changeAddress: address,
     feeRate,
     inputs,

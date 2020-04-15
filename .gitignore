@@ -8,3 +8,4 @@ coverage/
 .serverless
 .env.sh
 env/**
+playground
