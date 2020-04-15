@@ -1,9 +1,9 @@
-import { UTXO, } from './types';
 import { Memoize } from '@cryptoket/ts-memoize';
-import { BD } from './modules/BigDecimal';
-import * as bitcoin from 'bitcoinjs-lib';
 import BigNumber from 'bignumber.js';
-import { SelectorConfig, SelectorConstructor, AbstractSelector, p } from './modules/AbstractSelector';
+import * as bitcoin from 'bitcoinjs-lib';
+import { AbstractSelector, p, SelectorConfig, SelectorConstructor } from './modules/AbstractSelector';
+import { BD } from './modules/BigDecimal';
+import { UTXO, } from './types';
 
 export function UTXOSelector(config: SelectorConfig): SelectorConstructor {
   const $costPerInput = BD.BigDecimal.satoshi(config.inputByteSize);

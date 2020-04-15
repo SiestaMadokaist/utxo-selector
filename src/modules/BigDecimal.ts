@@ -3,12 +3,12 @@ import util from 'util';
 export namespace BD {
   export type NumberLike<U extends number = number> = Value<U> | FixedNumberString<U> | number | BigNumber | string;
   export class BigDecimal<U extends number> extends BigNumber {
+
+    static normalized(n: NumberLike<0>): Normalized {
+      return new this(n, 0);
+    }
     static satoshi(n: NumberLike<-8>, unit?: -8): Satoshi {
       return new this(n, -8);
-    }
-
-    [util.inspect.custom](): string {
-      return `BigDecimal(${this.toNumber()}, ${this._unit})`;
     }
 
     static wei(n: NumberLike<-18>): Wei {
@@ -19,19 +19,11 @@ export namespace BD {
       return new this(n, -6);
     }
 
-    static normalized(n: NumberLike<0>): Normalized {
-      return new this(n, 0);
-    }
-
-    private _unit: U;
-    constructor(value: NumberLike, unit: U) {
-      super(value as number);
-      this._unit = unit;
-    }
-
     static zero(): BigDecimal<0> {
       return new BigDecimal(0, 0);
     }
+
+    private _unit: U;
 
     eq!: (other: BigDecimal<U>) => boolean;
     gt!: (other: BigDecimal<U>) => boolean;
@@ -39,26 +31,30 @@ export namespace BD {
 
     lt!: (other: BigDecimal<U>) => boolean;
     lte!: (other: BigDecimal<U>) => boolean;
+    constructor(value: NumberLike, unit: U) {
+      super(value as number);
+      this._unit = unit;
+    }
 
-    normalized(): BigDecimal<0> {
-      const multiplier = new BigNumber(10).pow(this._unit);
-      return new BigDecimal(super.multipliedBy(multiplier), 0);
+    [util.inspect.custom](): string {
+      return `BigDecimal(${this.toNumber()}, ${this._unit})`;
     }
 
     integerValue(rm?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8): BigDecimal<U> {
       return new BigDecimal(super.integerValue(rm), this._unit);
     }
 
-    plus(other: BigDecimal<U>): BigDecimal<U> {
-      return new BigDecimal(super.plus(other), this._unit);
-    }
-
     minus(other: BigDecimal<U>): BigDecimal<U> {
       return new BigDecimal(super.minus(other), this._unit);
     }
 
-    value(): Value<U> {
-      return this.toNumber();
+    normalized(): BigDecimal<0> {
+      const multiplier = new BigNumber(10).pow(this._unit);
+      return new BigDecimal(super.multipliedBy(multiplier), 0);
+    }
+
+    plus(other: BigDecimal<U>): BigDecimal<U> {
+      return new BigDecimal(super.plus(other), this._unit);
     }
 
     toFixed(d: number = 0, roundingMode?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8): FixedNumberString<U> {
@@ -67,13 +63,17 @@ export namespace BD {
 
     toSatoshi(): Satoshi { return this.toUnit(-8); }
 
-    toWei(): Wei { return this.toUnit(-18); }
-
     toUnit<T extends number>(targetUnit: T): BigDecimal<T> {
       const powerDifference = new BigNumber(this._unit).minus(targetUnit);
       const multiplier = new BigNumber(10).pow(powerDifference);
       const bn = this.multipliedBy(multiplier);
       return new BigDecimal(bn, targetUnit);
+    }
+
+    toWei(): Wei { return this.toUnit(-18); }
+
+    value(): Value<U> {
+      return this.toNumber();
     }
   }
 

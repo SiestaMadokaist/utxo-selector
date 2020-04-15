@@ -1,11 +1,11 @@
 import * as bitcoin from 'bitcoinjs-lib';
-// import { BIP84Calculator, Input, TxOutput, UTXOSelector, WitnessInput } from './types';
-import { UTXO } from './types';
-import utils from 'util';
-import { BIP84Calculator } from '.';
 import { expect } from 'chai';
 import $debug from 'debug';
+import utils from 'util';
+import { BIP84Calculator } from '.';
 import { BD } from './modules/BigDecimal';
+// import { BIP84Calculator, Input, TxOutput, UTXOSelector, WitnessInput } from './types';
+import { UTXO } from './types';
 const debug = $debug('utxo-selector:test');
 
 Buffer.prototype[utils.inspect.custom as any] = function(this: Buffer): string {

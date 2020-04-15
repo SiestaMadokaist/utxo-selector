@@ -5,6 +5,8 @@
     ],
     "jsRules": {},
     "rules": {
+        "ban-types": false,
+        "no-namespace": false,
         "interface-name": false,
         "eofline": {
             "severity": "warning"

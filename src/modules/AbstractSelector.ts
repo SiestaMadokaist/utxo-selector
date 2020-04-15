@@ -1,16 +1,16 @@
-import { UTXO, } from '../types';
 import { Memoize } from '@cryptoket/ts-memoize';
-import { BD } from '../modules/BigDecimal';
-import * as bitcoin from 'bitcoinjs-lib';
 import BigNumber from 'bignumber.js';
+import * as bitcoin from 'bitcoinjs-lib';
+import { BD } from '../modules/BigDecimal';
+import { UTXO, } from '../types';
 namespace UNIT {
   export const SATOSHI = -8;
 }
 
 export interface SelectorConfig {
+  dustThreshold: BD.Value<-8>;
   inputByteSize: UTXO.ByteSize;
   outputByteSize: UTXO.ByteSize;
-  dustThreshold: BD.Value<-8>;
 }
 
 export type P<T> = T extends Number ? number :
@@ -58,52 +58,6 @@ export abstract class AbstractSelector {
 
   constructor(readonly props: UTXO.SelectorProps) {}
 
-  private [_outputs](): UTXO.TxOutput[] {
-    return this.props.outputs;
-  }
-
-  private [_witnessInput](): UTXO.WitnessInput[] {
-    const { inputs } = this.props;
-    const accumulator: UTXO.WitnessInput[] = [];
-    for (const input of inputs) {
-      if (input.nonWitnessUtxo instanceof Buffer) {
-        const tx = bitcoin.Transaction.fromBuffer(input.nonWitnessUtxo);
-        const output = tx.outs[p(input.index)] as UTXO.WitnessUTXO;
-        const witnessUtxo: UTXO.WitnessInput = {
-          ...input,
-          hash: tx.getHash(),
-          witnessUtxo: {
-            script: output.script,
-            value: output.value
-          },
-          nonWitnessUtxo: undefined,
-        };
-        accumulator.push(witnessUtxo);
-      } else if (input.witnessUtxo) {
-        accumulator.push(input);
-      }
-    }
-    return accumulator;
-  }
-
-  private [_takeBest](target: BD.Satoshi, candidates: UTXO.WitnessInput[]): UTXO.WitnessInput {
-    const sorted = candidates.sort((x, y) => x.witnessUtxo.value - y.witnessUtxo.value);
-    const cost = target.plus(this.costPerInput());
-    for (const candidate of sorted) {
-      const inputValue: BD.Satoshi = BD.BigDecimal.satoshi(candidate.witnessUtxo.value);
-      if (inputValue.gte(cost)) { return candidate; }
-    }
-    return sorted[sorted.length - 1];
-  }
-
-  private [_totalOutputWithoutChange](): BD.Satoshi {
-    return Memoize(this, _totalOutputWithoutChange, () => {
-      return this[_outputs]().map((x) => x.value)
-        .map((x) => BD.BigDecimal.satoshi(x))
-        .reduce((prev, cur) => prev.plus(cur), BD.BigDecimal.zero().toSatoshi());
-    });
-  }
-
   changeValue(): BD.Satoshi {
     return Memoize(this, 'changeValue', () => {
       const inputFee = BD.BigDecimal.satoshi(this.costPerInput().multipliedBy(new BigNumber(this.inputUtxos().length)).toNumber(), UNIT.SATOSHI);
@@ -128,9 +82,6 @@ export abstract class AbstractSelector {
       }
     });
   }
-
-  protected abstract $costPerInput(): BD.Satoshi;
-  protected abstract $costPerOutput(): BD.Satoshi;
 
   costPerInput(): BD.Satoshi {
     return Memoize(this, 'costPerInput', () => {
@@ -211,8 +162,6 @@ export abstract class AbstractSelector {
     });
   }
 
-  protected abstract dustThreshold(): BD.Satoshi;
-
   outputs(): UTXO.TxOutput[] {
     const outputs = this[_outputs]();
     const changeValue = this.changeValue();
@@ -260,6 +209,57 @@ export abstract class AbstractSelector {
       return outputs.map((o) => BD.BigDecimal.satoshi(o.value, UNIT.SATOSHI)).reduce((prev, cur) => {
         return prev.plus(cur);
       }, BD.BigDecimal.satoshi(0, -8));
+    });
+  }
+
+  protected abstract $costPerInput(): BD.Satoshi;
+  protected abstract $costPerOutput(): BD.Satoshi;
+
+  protected abstract dustThreshold(): BD.Satoshi;
+
+  private [_outputs](): UTXO.TxOutput[] {
+    return this.props.outputs;
+  }
+
+  private [_witnessInput](): UTXO.WitnessInput[] {
+    const { inputs } = this.props;
+    const accumulator: UTXO.WitnessInput[] = [];
+    for (const input of inputs) {
+      if (input.nonWitnessUtxo instanceof Buffer) {
+        const tx = bitcoin.Transaction.fromBuffer(input.nonWitnessUtxo);
+        const output = tx.outs[p(input.index)] as UTXO.WitnessUTXO;
+        const witnessUtxo: UTXO.WitnessInput = {
+          ...input,
+          hash: tx.getHash(),
+          witnessUtxo: {
+            script: output.script,
+            value: output.value
+          },
+          nonWitnessUtxo: undefined,
+        };
+        accumulator.push(witnessUtxo);
+      } else if (input.witnessUtxo) {
+        accumulator.push(input);
+      }
+    }
+    return accumulator;
+  }
+
+  private [_takeBest](target: BD.Satoshi, candidates: UTXO.WitnessInput[]): UTXO.WitnessInput {
+    const sorted = candidates.sort((x, y) => x.witnessUtxo.value - y.witnessUtxo.value);
+    const cost = target.plus(this.costPerInput());
+    for (const candidate of sorted) {
+      const inputValue: BD.Satoshi = BD.BigDecimal.satoshi(candidate.witnessUtxo.value);
+      if (inputValue.gte(cost)) { return candidate; }
+    }
+    return sorted[sorted.length - 1];
+  }
+
+  private [_totalOutputWithoutChange](): BD.Satoshi {
+    return Memoize(this, _totalOutputWithoutChange, () => {
+      return this[_outputs]().map((x) => x.value)
+        .map((x) => BD.BigDecimal.satoshi(x))
+        .reduce((prev, cur) => prev.plus(cur), BD.BigDecimal.zero().toSatoshi());
     });
   }
 }
