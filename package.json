@@ -1,5 +1,5 @@
 {
-  "name": "template.ramadoka",
+  "name": "@cryptoket/utxo-selector",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
