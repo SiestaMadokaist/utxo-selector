@@ -34,8 +34,8 @@ export const P2MSCalculator = {
     headerCost: 13,
   }),
   ['P2SH']: (m: number) => UTXOSelector({
-    inputByteSize: p(190 + (m * 111)),
+    inputByteSize: p(55 + (m * 108)),
     outputByteSize: p(32.2),
-    headerCost: 13,
+    headerCost: 25,
   }),
 };

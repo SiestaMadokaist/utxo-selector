@@ -4,13 +4,13 @@ import $debug from 'debug';
 import utils from 'util';
 import { P2WPKHCalculator } from '.';
 import { BD } from './modules/BigDecimal';
-// import { BIP84Calculator, Input, TxOutput, UTXOSelector, WitnessInput } from './types';
 import { UTXO } from './types';
 const debug = $debug('utxo-selector:test');
 
 Buffer.prototype[utils.inspect.custom as any] = function(this: Buffer): string {
   return `Buffer: ${this.toString('hex')}`;
 } as any;
+
 const sampleTxid = '1ccf1459e89abdefd14483d57807fe730ad8197634306e1b2a59d6ed5b0f012e';
 const randomHex = () => Math.floor(Math.random() * 16).toString(16);
 const network = bitcoin.networks.regtest;

@@ -8,7 +8,7 @@
     "lint": "tslint -p tsconfig.json",
     "fix": "yarn lint -p tsconfig.json -c tslint.fix.json --fix",
     "circular": "madge --circular ./dist",
-    "test": "mocha -r ts-node/register src/**/**.test.ts",
+    "test": "mocha -r ts-node/register ${TESTPATTERN:-'src/**/**.test.ts'}",
     "graph": "madge --image graph.png ./dist",
     "_deploy": "rm -rf ./dist && yarn fix && tsc && serverless deploy",
     "dev": "node --inspect=5858 -r ts-node/register ./src/index.dev.ts",

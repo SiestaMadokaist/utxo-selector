@@ -179,12 +179,24 @@ export abstract class AbstractSelector {
 
   psbt(params: { network: bitcoin.networks.Network}): bitcoin.Psbt {
     const psbt = new bitcoin.Psbt(params);
+    const inputs = this.inputUtxos();
     for (const input of this.inputUtxos()) {
-      psbt.addInput({
-        ...input,
-        hash: p(input.hash),
-        index: p(input.index),
-      });
+      const { nonWitnessUtxo, witnessUtxo, ...rest } = input;
+      if (nonWitnessUtxo instanceof Buffer) {
+        psbt.addInput({
+          ...rest,
+          hash: p(input.hash),
+          index: p(input.index),
+          nonWitnessUtxo,
+        });
+      } else {
+        psbt.addInput({
+          ...rest,
+          hash: p(input.hash),
+          index: p(input.index),
+          witnessUtxo,
+        });
+      }
     }
     for (const output of this.outputs()) {
       psbt.addOutput({
