@@ -54,7 +54,7 @@ describe('same-hash', () => {
     const { publicKey } = signer;
     const p2wpkh = bitcoin.payments.p2wpkh({ pubkey: publicKey, network: NETWORK });
     const address = p2wpkh.address as string;
-    const nonWitnessUtxo = createNonWitnessUTXO(address, 9999, 2);
+    const nonWitnessUtxo = createNonWitnessUTXO(address, 10000, 2);
     const feeRate = 2;
     const calculator = new P2WPKHCalculator({
       changeAddress: address,
@@ -69,7 +69,7 @@ describe('same-hash', () => {
           index: 1,
         }
       ],
-      outputs: [ { address, value: 15000 }]
+      outputs: [ { address, value: 9999 }]
     });
     const psbt = calculator.psbt({ network: NETWORK });
     psbt.signAllInputs(signer);
@@ -78,6 +78,6 @@ describe('same-hash', () => {
     const rate = psbt.getFee() / tx.virtualSize();
     debug(tx);
     debug({ vsize: tx.virtualSize(), gasFee: psbt.getFee(), feeRateRequest: feeRate, rate });
-    expect(tx.ins[0].hash).to.eq(tx.ins[1].hash);
+    expect(tx.ins[0].hash.toString('hex')).to.eq(tx.ins[1].hash.toString('hex'));
   });
 });
