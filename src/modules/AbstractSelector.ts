@@ -59,7 +59,12 @@ export abstract class AbstractSelector {
 
   constructor(readonly props: UTXO.SelectorProps) {}
 
-  protected abstract headerCost(): BD.Satoshi;
+  protected abstract $headerCost(): BD.Satoshi;
+
+  protected headerCost(): BD.Satoshi {
+    const s = this.$headerCost().multipliedBy(this.props.feeRate);
+    return BD.BigDecimal.satoshi(s, UNIT.SATOSHI);
+  }
 
   changeValue(): BD.Satoshi {
     return Memoize(this, 'changeValue', () => {

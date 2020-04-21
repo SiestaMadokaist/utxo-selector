@@ -11,7 +11,7 @@ export function UTXOSelector(config: SelectorConfig): SelectorConstructor {
   const dustThreshold = BD.BigDecimal.satoshi($costPerInput.plus($costPerOutput).multipliedBy(1.1));
   const headerCost = BD.BigDecimal.satoshi(config.headerCost);
   class Selector extends AbstractSelector {
-    protected headerCost(): BD.Satoshi { return headerCost; }
+    protected $headerCost(): BD.Satoshi { return headerCost; }
     protected $costPerInput(): BD.Satoshi { return $costPerInput; }
     protected $costPerOutput(): BD.Satoshi { return $costPerOutput; }
     protected dustThreshold(): BD.Satoshi { return dustThreshold; }

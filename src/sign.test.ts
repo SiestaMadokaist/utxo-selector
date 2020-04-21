@@ -23,7 +23,7 @@ const seed = Buffer.from('5eb00bbddcf069084889a8ab9155568165f5c453ccb85e70811aae
 const root = bitcoin.bip32.fromSeed(seed, NETWORK);
 const master = root.derivePath(`m/49'/0'/0'`);
 
-function createNonWitnessUTXO(address: string, value: number): { nonWitnessUtxo: UTXO.NonWitnessUTXO, hash: Buffer } {
+function createNonWitnessUTXO(address: string, value: number, outputCount: number = 1): { nonWitnessUtxo: UTXO.NonWitnessUTXO, hash: Buffer } {
   const prevPsbt = new bitcoin.Psbt({ network: NETWORK });
   const p2wpkh = bitcoin.payments.p2wpkh({ pubkey: master.publicKey, network: NETWORK });
   prevPsbt.addInput({
@@ -34,10 +34,12 @@ function createNonWitnessUTXO(address: string, value: number): { nonWitnessUtxo:
       value: value + 500,
     },
   });
-  prevPsbt.addOutput({
-    address: address as string,
-    value,
-  });
+  for (let i = 0; i < outputCount; i++) {
+    prevPsbt.addOutput({
+      address: address as string,
+      value,
+    });
+  }
   prevPsbt.signAllInputs(master);
   const validated = prevPsbt.validateSignaturesOfAllInputs();
   if (!validated) { throw new ValidationException(`signature doesnt match`); }
